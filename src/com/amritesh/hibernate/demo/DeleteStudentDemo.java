@@ -1,14 +1,12 @@
 package com.amritesh.hibernate.demo;
 
-import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import com.amritesh.hibernate.entity.demo.Student;
 
-public class UpdateStudentDemo {
+public class DeleteStudentDemo {
 
 	public static void main(String[] args) {
 		SessionFactory sessionFactory = new Configuration()
@@ -16,37 +14,29 @@ public class UpdateStudentDemo {
 										.addAnnotatedClass(Student.class)
 										.buildSessionFactory();
 		
-		Session session = sessionFactory.getCurrentSession();
-		
+		Session session = null;
 		try {
-			
+			session = sessionFactory.getCurrentSession();
 			session.beginTransaction();
-			int studentId = 1;
-			Student student = session.get(Student.class, studentId);
-			student.setFirstName("Nanji Bhai");
+			Student student = session.get(Student.class, 1);
+			session.delete(student);
 			session.getTransaction().commit();
+			session.close();
+			
 			
 			
 			
 			session = sessionFactory.getCurrentSession();
 			session.beginTransaction();
-			System.out.println(session.createQuery("update Student set email='foo@bar.com'").executeUpdate());
+			System.out.println(session.createQuery("delete Student s where s.id = 2").executeUpdate());
 			session.getTransaction().commit();
+			session.close();
 			
-			
-			
-			session = sessionFactory.getCurrentSession();
-			session.beginTransaction();
-			List<Student> studentList = session.createQuery("from Student").getResultList();
-			for (Student s : studentList) {
-				s.setLastName("Katappa");
-			}
-			session.getTransaction().commit();
 			
 		} catch (Exception e) {
+			System.out.println("Exception Here");
 			e.printStackTrace();
 		}
-		session.close();
 		sessionFactory.close();
 	}
 
